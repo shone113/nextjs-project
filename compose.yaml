@@ -1,0 +1,27 @@
+services:
+  server:
+    build:
+      context: .
+    image: nextjs-dev
+    ports:
+      - 3000:3000
+    environment:
+      NODE_ENV: development
+      POSTGRES_URL: postgres://postgres:super@nextjs-database:5432/todos
+    depends_on:
+      - nextjs-database
+    command: sh -c "node ./src/lib/init-db.js && npm run dev"
+
+  nextjs-database:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: super
+      POSTGRES_DB: todos
+    ports:
+      - 5432:5432
+    volumes:
+      - db-data:/var/lib/postgresql/data
+
+volumes:
+  db-data:
